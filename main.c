@@ -31,6 +31,13 @@ int pixel_igual(Pixel p1, Pixel p2) {
     return 0;
 }
 
+int rgb_media(int red, int green, int blue) {
+	int rgbmedia = 0;
+	rgbmedia = red + green + blue;
+	rgbmedia /= 3;
+	return rgbmedia;
+}
+
 
 Image escala_de_cinza(Image img) {
     /*for (unsigned int i = 0; i < img.h; ++i) {
@@ -41,13 +48,13 @@ Image escala_de_cinza(Image img) {
 
     for (unsigned int i = 0; i < img.h; ++i) {
         for (unsigned int j = 0; j < img.w; ++j) {
-            int media = img.pixel[i][j][0] +
-                        img.pixel[i][j][1] +
-                        img.pixel[i][j][2];
-            media /= 3;
-            img.pixel[i][j][0] = media;
-            img.pixel[i][j][1] = media;
-            img.pixel[i][j][2] = media;
+			int media = rgb_media(img.pixel[i][j][0], 
+				                img.pixel[i][j][1],
+				                img.pixel[i][j][2]);
+			
+			for (unsigned int k = 0; k < 3; ++k){
+	            img.pixel[i][j][k] = media;
+			}
         }
     }
 
