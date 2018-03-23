@@ -106,6 +106,73 @@ Image cut_image(Image img, int x, int y, int w, int h) {
     return cut;
 }
 
+Image sepia(Image img) {
+    for (unsigned int x = 0; x < img.h; ++x) {
+        for (unsigned int j = 0; j < img.w; ++j) {
+            unsigned short int pixel[3];
+            for (unsigned int k = 0; k < 3; ++k) {
+                pixel[k] = img.pixel[x][j][k];
+            }
+
+            int p =  pixel[0] * .393 + pixel[1] * .769 + pixel[2] * .189;
+            int min_r = (255 >  p) ? p : 255;
+            img.pixel[x][j][0] = min_r;
+
+            p =  pixel[0] * .349 + pixel[1] * .686 + pixel[2] * .168;
+            min_r = (255 >  p) ? p : 255;
+            img.pixel[x][j][1] = min_r;
+
+            p =  pixel[0] * .272 + pixel[1] * .534 + pixel[2] * .131;
+            min_r = (255 >  p) ? p : 255;
+            img.pixel[x][j][2] = min_r;
+        }
+    }
+    
+    return img;
+}
+
+Image mirror_image(Image img, int horizontal) {
+    int w = img.w, h = img.h;
+
+    if (horizontal == 1) w /= 2;
+    else h /= 2;
+
+    for (int i2 = 0; i2 < h; ++i2) {
+        for (int j = 0; j < w; ++j) {
+            int x = i2, y = j;
+
+            if (horizontal == 1) y = img.w - 1 - j;
+            else x = img.h - 1 - i2;
+
+            Pixel aux1;
+            aux1.r = img.pixel[i2][j][0];
+            aux1.g = img.pixel[i2][j][1];
+            aux1.b = img.pixel[i2][j][2];
+
+            for (unsigned int k = 0; k < 3; ++k) {
+                img.pixel[i2][j][k] = img.pixel[x][y][k];
+            }
+
+            img.pixel[x][y][0] = aux1.r;
+            img.pixel[x][y][1] = aux1.g;
+            img.pixel[x][y][2] = aux1.b;
+        }
+    }
+    return img;
+}
+
+Image reader(Image img){
+    // read all pixels of image
+    for (unsigned int i = 0; i < img.h; ++i) {
+        for (unsigned int j = 0; j < img.w; ++j) {
+            scanf("%hu %hu %hu", &img.pixel[i][j][0],
+                                 &img.pixel[i][j][1],
+                                 &img.pixel[i][j][2]);
+
+        }
+    }
+    return img;
+}
 
 int main() {
     Image img;
@@ -118,15 +185,7 @@ int main() {
     int max_color;
     scanf("%u %u %d", &img.w, &img.h, &max_color);
 
-    // read all pixels of image
-    for (unsigned int i = 0; i < img.h; ++i) {
-        for (unsigned int j = 0; j < img.w; ++j) {
-            scanf("%hu %hu %hu", &img.pixel[i][j][0],
-                                 &img.pixel[i][j][1],
-                                 &img.pixel[i][j][2]);
-
-        }
-    }
+    img = reader(img);
 
     int options;
     scanf("%d", &options);
@@ -137,33 +196,13 @@ int main() {
 
         switch(option) {
             case 1: { 
-                // Escala de Cinza
+                // Gray Scale
                 img = gray_scale(img);
                 break;
             }
             case 2: { 
-                // Filtro Sepia
-                for (unsigned int x = 0; x < img.h; ++x) {
-                    for (unsigned int j = 0; j < img.w; ++j) {
-                        unsigned short int pixel[3];
-                        for (unsigned int k = 0; k < 3; ++k) {
-                            pixel[k] = img.pixel[x][j][k];
-                        }
-
-                        int p =  pixel[0] * .393 + pixel[1] * .769 + pixel[2] * .189;
-                        int min_r = (255 >  p) ? p : 255;
-                        img.pixel[x][j][0] = min_r;
-
-                        p =  pixel[0] * .349 + pixel[1] * .686 + pixel[2] * .168;
-                        min_r = (255 >  p) ? p : 255;
-                        img.pixel[x][j][1] = min_r;
-
-                        p =  pixel[0] * .272 + pixel[1] * .534 + pixel[2] * .131;
-                        min_r = (255 >  p) ? p : 255;
-                        img.pixel[x][j][2] = min_r;
-                    }
-                }
-
+                // Sepia filter
+                img = sepia(img);
                 break;
             }
             case 3: { 
@@ -187,33 +226,7 @@ int main() {
                 // Mirroring
                 int horizontal = 0;
                 scanf("%d", &horizontal);
-
-                int w = img.w, h = img.h;
-
-                if (horizontal == 1) w /= 2;
-                else h /= 2;
-
-                for (int i2 = 0; i2 < h; ++i2) {
-                    for (int j = 0; j < w; ++j) {
-                        int x = i2, y = j;
-
-                        if (horizontal == 1) y = img.w - 1 - j;
-                        else x = img.h - 1 - i2;
-
-                        Pixel aux1;
-                        aux1.r = img.pixel[i2][j][0];
-                        aux1.g = img.pixel[i2][j][1];
-                        aux1.b = img.pixel[i2][j][2];
-
-                        for (unsigned int k = 0; k < 3; ++k) {
-                            img.pixel[i2][j][k] = img.pixel[x][y][k];
-                        }
-
-                        img.pixel[x][y][0] = aux1.r;
-                        img.pixel[x][y][1] = aux1.g;
-                        img.pixel[x][y][2] = aux1.b;
-                    }
-                }
+                img = mirror_image(img,horizontal);
                 break;
             }
             case 6: { 
