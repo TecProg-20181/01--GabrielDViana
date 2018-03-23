@@ -12,33 +12,17 @@ typedef struct _image {
     unsigned int h;
 } Image;
 
-
-int max(int a, int b) {
-    if (a > b)
-        return a;
-    return b;
+int gray_scale_media(int red, int green, int blue) {
+	int media = 0;
+	media = red + green + blue;
+	media /= 3;
+	return media;
 }
-
-int pixel_igual(Pixel p1, Pixel p2) {
-    if (p1.r == p2.r &&
-        p1.g == p2.g &&
-        p1.b == p2.b)
-        return 1;
-    return 0;
-}
-
-int rgb_media(int red, int green, int blue) {
-	int rgbmedia = 0;
-	rgbmedia = red + green + blue;
-	rgbmedia /= 3;
-	return rgbmedia;
-}
-
 
 Image escala_de_cinza(Image img) {
     for (unsigned int i = 0; i < img.h; ++i) {
         for (unsigned int j = 0; j < img.w; ++j) {
-			int media = rgb_media(img.pixel[i][j][0], 
+			int media = gray_scale_media(img.pixel[i][j][0], 
 				                img.pixel[i][j][1],
 				                img.pixel[i][j][2]);
 			
@@ -85,9 +69,9 @@ Image rotacionar90direita(Image img) {
 
     for (unsigned int i = 0, y = 0; i < rotacionada.h; ++i, ++y) {
         for (int j = rotacionada.w - 1, x = 0; j >= 0; --j, ++x) {
-            rotacionada.pixel[i][j][0] = img.pixel[x][y][0];
-            rotacionada.pixel[i][j][1] = img.pixel[x][y][1];
-            rotacionada.pixel[i][j][2] = img.pixel[x][y][2];
+            for (unsigned int k = 0; k < 3; ++k) {
+                rotacionada.pixel[i][j][k] = img.pixel[x][y][k];
+            }
         }
     }
 
@@ -98,9 +82,9 @@ void inverter_cores(unsigned short int pixel[512][512][3],
                     unsigned int w, unsigned int h) {
     for (unsigned int i = 0; i < h; ++i) {
         for (unsigned int j = 0; j < w; ++j) {
-            pixel[i][j][0] = 255 - pixel[i][j][0];
-            pixel[i][j][1] = 255 - pixel[i][j][1];
-            pixel[i][j][2] = 255 - pixel[i][j][2];
+            for (unsigned int k = 0; k < 3; ++k) {
+                pixel[i][j][k] = 255 - pixel[i][j][k];
+            }
         }
     }
 }
@@ -113,9 +97,9 @@ Image cortar_imagem(Image img, int x, int y, int w, int h) {
 
     for(int i = 0; i < h; ++i) {
         for(int j = 0; j < w; ++j) {
-            cortada.pixel[i][j][0] = img.pixel[i + y][j + x][0];
-            cortada.pixel[i][j][1] = img.pixel[i + y][j + x][1];
-            cortada.pixel[i][j][2] = img.pixel[i + y][j + x][2];
+            for (unsigned int k = 0; k < 3; ++k) {
+                cortada.pixel[i][j][k] = img.pixel[i + y][j + x][k];
+            }
         }
     }
 
@@ -162,9 +146,9 @@ int main() {
                 for (unsigned int x = 0; x < img.h; ++x) {
                     for (unsigned int j = 0; j < img.w; ++j) {
                         unsigned short int pixel[3];
-                        pixel[0] = img.pixel[x][j][0];
-                        pixel[1] = img.pixel[x][j][1];
-                        pixel[2] = img.pixel[x][j][2];
+                        for (unsigned int k = 0; k < 3; ++k) {
+                            pixel[k] = img.pixel[x][j][k];
+                        }
 
                         int p =  pixel[0] * .393 + pixel[1] * .769 + pixel[2] * .189;
                         int menor_r = (255 >  p) ? p : 255;
@@ -221,9 +205,9 @@ int main() {
                         aux1.g = img.pixel[i2][j][1];
                         aux1.b = img.pixel[i2][j][2];
 
-                        img.pixel[i2][j][0] = img.pixel[x][y][0];
-                        img.pixel[i2][j][1] = img.pixel[x][y][1];
-                        img.pixel[i2][j][2] = img.pixel[x][y][2];
+                        for (unsigned int k = 0; k < 3; ++k) {
+                            img.pixel[i2][j][k] = img.pixel[x][y][k];
+                        }
 
                         img.pixel[x][y][0] = aux1.r;
                         img.pixel[x][y][1] = aux1.g;
