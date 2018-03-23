@@ -7,10 +7,6 @@ typedef struct _pixel {
 } Pixel;
 
 typedef struct _image {
-    // [width][height][rgb]
-    // 0 -> r
-    // 1 -> g
-    // 2 -> b
     unsigned short int pixel[512][512][3];
     unsigned int w;
     unsigned int h;
@@ -40,12 +36,6 @@ int rgb_media(int red, int green, int blue) {
 
 
 Image escala_de_cinza(Image img) {
-    /*for (unsigned int i = 0; i < img.h; ++i) {
-        for (unsigned int j = 0; j < img.w; ++j) {
-            print("%u", img.pixel[i][j][0] + img.pixel[i][j][1] + img.pixel[i][j][2]);
-        }
-    }*/
-
     for (unsigned int i = 0; i < img.h; ++i) {
         for (unsigned int j = 0; j < img.w; ++j) {
 			int media = rgb_media(img.pixel[i][j][0], 
@@ -76,7 +66,6 @@ void blur(unsigned int h, unsigned short int pixel[512][512][3], int T, unsigned
                 }
             }
 
-            // printf("%u", media.r)
             media.r /= T * T;
             media.g /= T * T;
             media.b /= T * T;
@@ -163,11 +152,13 @@ int main() {
         scanf("%d", &opcao);
 
         switch(opcao) {
-            case 1: { // Escala de Cinza
+            case 1: { 
+                // Escala de Cinza
                 img = escala_de_cinza(img);
                 break;
             }
-            case 2: { // Filtro Sepia
+            case 2: { 
+                // Filtro Sepia
                 for (unsigned int x = 0; x < img.h; ++x) {
                     for (unsigned int j = 0; j < img.w; ++j) {
                         unsigned short int pixel[3];
@@ -191,13 +182,15 @@ int main() {
 
                 break;
             }
-            case 3: { // Blur
+            case 3: { 
+                // Blur
                 int tamanho = 0;
                 scanf("%d", &tamanho);
                 blur(img.h, img.pixel, tamanho, img.w);
                 break;
             }
-            case 4: { // Rotacao
+            case 4: { 
+                // Rotacao
                 int quantas_vezes = 0;
                 scanf("%d", &quantas_vezes);
                 quantas_vezes %= 4;
@@ -206,7 +199,8 @@ int main() {
                 }
                 break;
             }
-            case 5: { // Espelhamento
+            case 5: { 
+                // Espelhamento
                 int horizontal = 0;
                 scanf("%d", &horizontal);
 
@@ -238,11 +232,13 @@ int main() {
                 }
                 break;
             }
-            case 6: { // Inversao de Cores
+            case 6: { 
+                // Inversao de Cores
                 inverter_cores(img.pixel, img.w, img.h);
                 break;
             }
-            case 7: { // Cortar Imagem
+            case 7: { 
+                // Cortar Imagem
                 int x, y;
                 scanf("%d %d", &x, &y);
                 int w, h;
